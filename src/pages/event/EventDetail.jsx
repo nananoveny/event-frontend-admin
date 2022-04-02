@@ -3,7 +3,7 @@ import Navbar from '../../components/navbar/Navbar';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
 import './css/detail-event.scss';
-import { Avatar, Badge, Box } from '@mui/material';
+import { Avatar, Badge, Box, Modal } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { getListUserApi } from './event.api';
 import PersonIcon from '@mui/icons-material/Person';
@@ -11,10 +11,34 @@ import FestivalIcon from '@mui/icons-material/Festival';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
 import { getItemEventApi } from './event.api';
 import { getUrlImg } from '../../utils/helper.util';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import { Button, CardActionArea, CardActions } from '@mui/material';
 
 const EventDetail = () => {
+  const [isShowQR, setIsShowQR] = useState(false);
   const [event, setEvent] = useState(null);
   const { id } = useParams();
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 350,
+    bgcolor: 'background.paper',
+    border: '1px solid #f1f1f1',
+    boxShadow: 24,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    p: 4,
+  };
+
+  const handleShowQR = () => setIsShowQR(true);
+  const handleCloseQR = () => setIsShowQR(false);
 
   useEffect(() => {
     (async () => {
@@ -119,103 +143,176 @@ const EventDetail = () => {
       <div className='singleContainer'>
         <Navbar />
         <IconBreadcrumbs breadcrumbs={breadcrumb} />
+
         {event && (
-          <>
-            <div className='top'>
-              <div className='left'>
-                <div className='editButton'>Edit</div>
-                <h1 className='title'>Event Information</h1>
-                <div className='item'>
-                  <img
-                    src={event.qrImage}
-                    alt=''
-                    className=''
-                    width='300px'
-                    height='50%'
-                  />
-                  <div className='details'>
-                    <h1 className='itemTitle'>{event.title}</h1>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Address:</span>
-                      <span className='itemValue'>{event.address}</span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Place:</span>
-                      <span className='itemValue'>{event.placeHost}</span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Date:</span>
-                      <span className='itemValue'>
-                        {new Date(event.date).toDateString()}
-                      </span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Time Start:</span>
-                      <span className='itemValue'>
-                        {new Date(event.timeStart).toLocaleTimeString([], {
-                          timeStyle: 'short',
-                        })}
-                      </span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Time Finish:</span>
-                      <span className='itemValue'>
-                        {new Date(event.timeFinish).toLocaleTimeString([], {
-                          timeStyle: 'short',
-                        })}
-                      </span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Quantity:</span>
-                      <span className='itemValue'>{event.quantity}</span>
-                    </div>
-                    <div className='detailItem'>
-                      <span className='itemKey'>Total Registration:</span>
-                      <span className='itemValue'>
-                        {event.participantList.length}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className='right'>
-                <img
-                  src={getUrlImg(event.image)}
-                  alt=''
-                  className=''
-                  width='100%'
-                  height='100%'
-                />
-              </div>
-            </div>
-            <div className='bottom'>
-              <Box
+          <Card sx={{ m: 2 }}>
+            <CardActionArea>
+              <CardMedia
+                component='img'
+                height='350'
                 sx={{
-                  display: 'flex',
-                  p: 1,
-                  alignItems: 'center',
+                  objectFit: 'fill',
                 }}
-              >
-                <p>List Participant</p>
-                <Badge
-                  color='secondary'
-                  sx={{ m: 1 }}
-                  badgeContent={eventUsers.length}
-                >
-                  <PersonIcon />
-                </Badge>
-              </Box>
-              <DataGrid
-                rows={eventUsers}
-                autoHeight
-                columns={columns}
-                pageSize={12}
-                rowsPerPageOptions={[5]}
-                disableSelectionOnClick
+                image={getUrlImg(event.image)}
+                alt='green iguana'
               />
-            </div>
-          </>
+              <CardContent>
+                <Typography
+                  gutterBottom
+                  variant='h5'
+                  sx={{ fontSize: '2rem', fontWeight: 'bold' }}
+                  component='div'
+                >
+                  {event.title}
+                </Typography>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Address:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {event.address}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Place:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {event.placeHost}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Date:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {new Date(event.date).toDateString()}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Time Start:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {new Date(event.timeStart).toLocaleTimeString([], {
+                      timeStyle: 'short',
+                    })}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Time Finish:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {new Date(event.timeFinish).toLocaleTimeString([], {
+                      timeStyle: 'short',
+                    })}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Quantity
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {event.quantity}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                  <Typography
+                    variant='body1'
+                    color='text.secondary'
+                    sx={{ mr: 1, fontWeight: 700 }}
+                  >
+                    Total Registration:
+                  </Typography>
+                  <Typography variant='body1' color='text.secondary'>
+                    {event.participantList.length}
+                  </Typography>
+                </Box>
+              </CardContent>
+            </CardActionArea>
+            <CardActions
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <Button color='primary' onClick={handleShowQR}>
+                Show QR Code
+              </Button>
+            </CardActions>
+          </Card>
         )}
+        <Box sx={{ m: 2 }}>
+          <Box
+            sx={{
+              display: 'flex',
+              p: 1,
+              alignItems: 'center',
+            }}
+          >
+            <Box sx={{ fontSize: '1.2rem', fontWeight: 650 }}>
+              List Participant
+            </Box>
+            <Badge
+              color='secondary'
+              sx={{ m: 1 }}
+              badgeContent={eventUsers.length}
+            >
+              <PersonIcon />
+            </Badge>
+          </Box>
+
+          <DataGrid
+            rows={eventUsers}
+            autoHeight
+            columns={columns}
+            pageSize={12}
+            rowsPerPageOptions={[5, 10, 15, 20]}
+            disableSelectionOnClick
+          />
+        </Box>
+        <Modal
+          open={isShowQR}
+          onClose={handleCloseQR}
+          aria-labelledby='modal-modal-title'
+          aria-describedby='modal-modal-description'
+        >
+          <Box sx={style}>
+            <img
+              src={event.qrImage}
+              alt={event.title}
+              width='300px'
+              height='50%'
+            />
+          </Box>
+        </Modal>
       </div>
     </div>
   );

@@ -5,14 +5,12 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import EditIcon from '@mui/icons-material/Edit';
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
-// import './css/list-event.scss';
 import { getListUserApi, deleteUserApi } from './user.api';
 import { DataGrid } from '@mui/x-data-grid';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
 import PersionIcon from '@mui/icons-material/Person';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModalConfirm from '../../components/shared/modalConfirm';
-import { getUrlImg } from '../../utils/helper.util';
 import { toast } from 'react-toastify';
 
 const UserList = () => {
@@ -132,19 +130,18 @@ const UserList = () => {
 
   const handleDelete = async (id) => {
     setIsShowModal(false);
-
     if (id) {
-      // try {
-      //   const response = await deleteEventApi(id);
-      //   if (response.status === 204) {
-      //     const listEvents = rows.filter((row) => row._id !== id);
-      //     setRows(listEvents);
-      //     toast.success('Delete successfully');
-      //   }
-      // } catch (error) {
-      //   toast.error('Opps something went wrong');
-      //   console.log(error.response);
-      // }
+      try {
+        const response = await deleteUserApi(id);
+        if (response.status === 204) {
+          const listUsers = rows.filter((row) => row._id !== id);
+          setRows(listUsers);
+          toast.success('Delete successfully');
+        }
+      } catch (error) {
+        toast.error('Opps something went wrong');
+        console.log(error.response);
+      }
     }
     setIdItem(null);
   };

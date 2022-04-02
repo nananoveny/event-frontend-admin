@@ -11,6 +11,8 @@ export const getListEventApi = () => getRequest(path);
 
 export const getItemEventApi = (id) => getRequest(`${path}/${id}`);
 
+export const getListEventByUserIdApi = (id) => getRequest(`${path}/user/${id}`);
+
 export const createEventApi = (payload) => {
   return postRequest(path, payload, {
     headers: {
