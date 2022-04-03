@@ -6,7 +6,7 @@ import { TextField, Box, Grid, Paper } from '@mui/material';
 import { LocalizationProvider, MobileDatePicker, TimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
-import UploadDropzone from '../../components/form/Dropzone';
+import UploadDropzone from '../../components/form/dropzone';
 import { coverTimeToDate } from '../../utils/date.util';
 import { toast } from 'react-toastify';
 import { LoadingButton } from '@mui/lab';

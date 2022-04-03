@@ -7,7 +7,7 @@ import { LocalizationProvider, MobileDatePicker, TimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
 import { createEventApi } from './event.api';
-import UploadDropzone from '../../components/form/Dropzone';
+import UploadDropzone from '../../components/form/dropzone';
 import { coverTimeToDate } from '../../utils/date.util';
 import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
