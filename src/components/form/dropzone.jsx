@@ -33,6 +33,7 @@ const rejectStyle = {
 function UploadDropzone({ onChange }) {
   const onDrop = useCallback((acceptedFiles) => {
     onChange(acceptedFiles[0]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =

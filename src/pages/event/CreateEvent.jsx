@@ -2,19 +2,22 @@ import { useState, useEffect, useMemo } from 'react';
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import './css/create-event.scss';
-import { TextField, Button, Box, Grid, Paper } from '@mui/material';
+import { TextField, Box, Grid, Paper } from '@mui/material';
 import { LocalizationProvider, MobileDatePicker, TimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
 import { createEventApi } from './event.api';
-import UploadDropzone from '../../components/form/dropzone';
+import UploadDropzone from '../../components/form/Dropzone';
 import { coverTimeToDate } from '../../utils/date.util';
+import { LoadingButton } from '@mui/lab';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
+import AddIcon from '@mui/icons-material/Add';
 import FestivalIcon from '@mui/icons-material/Festival';
 
 const CreateEvent = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState(null);
   const { handleSubmit, control, reset } = useForm();
   const navigate = useNavigate();
@@ -22,6 +25,7 @@ const CreateEvent = () => {
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         if (key === 'timeStart' || key === 'timeFinish') {
@@ -41,8 +45,9 @@ const CreateEvent = () => {
         setErrors(error.response.data.errors);
       } else {
         toast.error('Opps. Something went wrong');
-        console.log(error.response);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,9 +69,11 @@ const CreateEvent = () => {
 
   useEffect(() => {
     errors.map((error) => {
-      toast.error(error.message);
+      return toast.error(error.message);
     });
-    // setErrors([]);
+    return () => {
+      setErrors([]);
+    };
   }, [errors]);
 
   return (
@@ -306,9 +313,16 @@ const CreateEvent = () => {
                 />
               </Box>
               <Box margin={1}>
-                <Button type='submit' variant='contained' color='success'>
+                <LoadingButton
+                  type='submit'
+                  color='success'
+                  variant='contained'
+                  loadingPosition='start'
+                  loading={isLoading}
+                  startIcon={<AddIcon />}
+                >
                   Create New
-                </Button>
+                </LoadingButton>
               </Box>
             </form>
           </Grid>

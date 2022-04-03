@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import {
@@ -91,7 +90,7 @@ const DetailUser = () => {
         isActive: true,
       },
     ],
-    [],
+    [id],
   );
 
   const castToRows = (events) =>

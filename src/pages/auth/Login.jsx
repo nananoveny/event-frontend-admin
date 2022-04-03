@@ -13,13 +13,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useForm, Controller } from 'react-hook-form';
 import { loginApi } from './auth.api';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 
 const theme = createTheme();
 
 export default function Login() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { handleSubmit, control } = useForm();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,9 +34,9 @@ export default function Login() {
 
       const response = await loginApi(data);
       localStorage.setItem('token', response.data.data.accessToken);
-      navigate('/');
+      window.location.href = '/';
     } catch (error) {
-      const msg = error.response.data.errors.message;
+      const msg = error.response.data?.errors.message;
       if (msg) {
         setError(msg);
       }
@@ -96,7 +96,7 @@ export default function Login() {
               rules={{
                 required: 'Email is required',
                 pattern: {
-                  value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g,
+                  value: /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g,
                   message: 'Invalid email address',
                 },
               }}

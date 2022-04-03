@@ -205,7 +205,7 @@ const UserList = () => {
               autoHeight
               columns={columns}
               pageSize={12}
-              rowsPerPageOptions={[5]}
+              rowsPerPageOptions={[5, 10, 15, 20, 25]}
               components={{
                 LoadingOverlay: LinearProgress,
               }}

@@ -1,9 +1,3 @@
-import moment from 'moment';
-
-export const formatDate = (date, format = 'dd/MM/yyyy') => {
-  return moment(date, format);
-};
-
 export const coverTimeToDate = (timeStr) => {
   if (Date.parse(timeStr)) {
     return new Date(timeStr);

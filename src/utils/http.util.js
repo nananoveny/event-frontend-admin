@@ -1,14 +1,15 @@
 import axios from 'axios';
+import configData from '../config.json';
 
 const axiosConfig = {
-  baseURL: 'https://events-api-nhatan.herokuapp.com',
+  // baseURL: configData.API_ENDPOINT,
   headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   timout: 500,
 };
 
 const Http = axios.create(axiosConfig);
 
-const baseURL = 'https://events-api-nhatan.herokuapp.com';
+const baseURL = configData.API_ENDPOINT;
 
 export function getRequest(url, option = {}) {
   return Http.get(`${baseURL}/${url}`, option);

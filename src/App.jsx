@@ -1,10 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Home from './pages/home/Home';
 import Login from './pages/auth/Login';
-import './style/dark.scss';
-import { useContext } from 'react';
-import { DarkModeContext } from './context/darkModeContext';
-import { useSelector } from 'react-redux';
 import EventList from './pages/event/EventList';
 import CreateEvent from './pages/event/CreateEvent';
 import EditEvent from './pages/event/EditEvent';
@@ -16,13 +12,11 @@ import DetailUser from './pages/user/DetailUser';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrivateRoute from './components/shared/privateRoute';
+import isValidToken from './utils/jwt.util';
 
 function App() {
-  const { darkMode } = useContext(DarkModeContext);
-  const user = useSelector((state) => state.user.currentUser);
-
   return (
-    <div className={darkMode ? 'app dark' : 'app'}>
+    <>
       <BrowserRouter>
         <Routes>
           <Route path='/'>
@@ -36,7 +30,7 @@ function App() {
             />
             <Route
               path='login'
-              element={user ? <Navigate to='/' /> : <Login />}
+              element={isValidToken() ? <Navigate to='/' /> : <Login />}
             />
             <Route path='user'>
               <Route
@@ -110,8 +104,7 @@ function App() {
         </Routes>
       </BrowserRouter>
       <ToastContainer />
-    </div>
-    // <Table/>
+    </>
   );
 }
 

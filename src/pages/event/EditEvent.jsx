@@ -2,20 +2,23 @@ import { useState, useEffect, useMemo } from 'react';
 import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import './css/create-event.scss';
-import { TextField, Button, Box, Grid, Paper } from '@mui/material';
+import { TextField, Box, Grid, Paper } from '@mui/material';
 import { LocalizationProvider, MobileDatePicker, TimePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
-import UploadDropzone from '../../components/form/dropzone';
+import UploadDropzone from '../../components/form/Dropzone';
 import { coverTimeToDate } from '../../utils/date.util';
 import { toast } from 'react-toastify';
+import { LoadingButton } from '@mui/lab';
 import { useParams } from 'react-router-dom';
 import { getItemEventApi, updateEventApi } from './event.api';
 import { getUrlImg } from '../../utils/helper.util';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
 import FestivalIcon from '@mui/icons-material/Festival';
+import EditIcon from '@mui/icons-material/Edit';
 
 const EditEvent = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [event, setEvent] = useState({});
   const [image, setImage] = useState(null);
   const { handleSubmit, control, reset } = useForm();
@@ -41,10 +44,12 @@ const EditEvent = () => {
         });
       } catch (error) {}
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const formData = new FormData();
       Object.keys(data).forEach((key) => {
         if (key === 'timeStart' || key === 'timeFinish') {
@@ -63,8 +68,9 @@ const EditEvent = () => {
         setErrors(error.response.data.errors);
       } else {
         toast.error('Opps. Something went wrong');
-        console.log(error.response);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,9 +92,12 @@ const EditEvent = () => {
 
   useEffect(() => {
     errors.map((error) => {
-      toast.error(error.message);
+      return toast.error(error.message);
     });
-    // setErrors([]);
+
+    return () => {
+      setErrors([]);
+    };
   }, [errors]);
 
   return (
@@ -113,7 +122,12 @@ const EditEvent = () => {
                   }}
                   alt='Image'
                   src={
-                    image ? URL.createObjectURL(image) : getUrlImg(event.image)
+                    image
+                      ? URL.createObjectURL(image)
+                      : getUrlImg(
+                          event.image ||
+                            'https://getuikit.com/v2/docs/images/placeholder_600x400.svg',
+                        )
                   }
                 />
               </Paper>
@@ -327,9 +341,16 @@ const EditEvent = () => {
                 />
               </Box>
               <Box margin={1}>
-                <Button type='submit' variant='contained' color='success'>
+                <LoadingButton
+                  type='submit'
+                  color='success'
+                  variant='contained'
+                  loadingPosition='start'
+                  loading={isLoading}
+                  startIcon={<EditIcon />}
+                >
                   Update
-                </Button>
+                </LoadingButton>
               </Box>
             </form>
           </Grid>

@@ -3,7 +3,6 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import {
   TextField,
-  Button,
   Box,
   Grid,
   Select,
@@ -17,17 +16,21 @@ import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
 import { createUserApi } from './user.api';
 import { useNavigate } from 'react-router-dom';
+import { LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
+import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
 
 const CreateUser = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { handleSubmit, control, reset } = useForm();
   const navigate = useNavigate();
   const [errors, setErrors] = useState([]);
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const response = await createUserApi({
         ...data,
         isAdmin: data.isAdmin === 'admin',
@@ -44,8 +47,9 @@ const CreateUser = () => {
         setErrors(error.response.data.errors);
       } else {
         toast.error('Opps. Something went wrong');
-        console.log(error.response);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -69,7 +73,9 @@ const CreateUser = () => {
     errors.map((error) => {
       return toast.error(error.message);
     });
-    // setErrors([]);
+    return () => {
+      setErrors([]);
+    };
   }, [errors]);
 
   return (
@@ -383,9 +389,16 @@ const CreateUser = () => {
                   my: 2,
                 }}
               >
-                <Button type='submit' variant='contained' color='success'>
+                <LoadingButton
+                  type='submit'
+                  color='success'
+                  variant='contained'
+                  loadingPosition='start'
+                  loading={isLoading}
+                  startIcon={<AddIcon />}
+                >
                   Create New
-                </Button>
+                </LoadingButton>
               </Box>
             </form>
           </Grid>

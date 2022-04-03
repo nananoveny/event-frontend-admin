@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import './widget.scss';
+import { Link } from 'react-router-dom';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import FestivalIcon from '@mui/icons-material/Festival';
 import { getListEventApi } from '../../pages/event/event.api';
 import { getListUserApi } from '../../pages/user/user.api';
+import './widget.scss';
 
 const Widget = ({ type }) => {
   const [totalUser, setTotalUser] = useState(0);
@@ -26,7 +27,11 @@ const Widget = ({ type }) => {
       data = {
         title: 'USERS',
         isUser: true,
-        link: 'See all users',
+        link: (
+          <Link style={{ textDecoration: 'none' }} to='/user'>
+            See all users
+          </Link>
+        ),
         icon: (
           <PersonOutlinedIcon
             className='icon'
@@ -42,9 +47,13 @@ const Widget = ({ type }) => {
       data = {
         title: 'EVENTS',
         isMoney: false,
-        link: 'View all orders',
+        link: (
+          <Link style={{ textDecoration: 'none' }} to='/event'>
+            See all events
+          </Link>
+        ),
         icon: (
-          <ShoppingCartOutlinedIcon
+          <FestivalIcon
             className='icon'
             style={{
               backgroundColor: 'rgba(218, 165, 32, 0.2)',

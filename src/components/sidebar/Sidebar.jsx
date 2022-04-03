@@ -3,14 +3,12 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import StoreIcon from '@mui/icons-material/Store';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { Link, useNavigate } from 'react-router-dom';
-import { DarkModeContext } from '../../context/darkModeContext';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import ModalConfirm from '../../components/shared/modalConfirm';
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const [isShowModal, setIsShowModal] = useState(false);
-  const { dispatch } = useContext(DarkModeContext);
 
   const handleLogout = () => {
     setIsShowModal(false);
@@ -52,16 +50,6 @@ const Sidebar = () => {
             <span>Logout</span>
           </li>
         </ul>
-      </div>
-      <div className='bottom'>
-        <div
-          className='colorOption'
-          onClick={() => dispatch({ type: 'LIGHT' })}
-        ></div>
-        <div
-          className='colorOption'
-          onClick={() => dispatch({ type: 'DARK' })}
-        ></div>
       </div>
       <ModalConfirm
         isOpen={isShowModal}

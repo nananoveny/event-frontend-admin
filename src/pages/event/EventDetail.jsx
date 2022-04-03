@@ -16,8 +16,10 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import { Button, CardActionArea, CardActions } from '@mui/material';
+import { toast } from 'react-toastify';
 
 const EventDetail = () => {
+  const [eventUsers, setEventUsers] = useState([]);
   const [isShowQR, setIsShowQR] = useState(false);
   const [event, setEvent] = useState(null);
   const { id } = useParams();
@@ -37,15 +39,25 @@ const EventDetail = () => {
     p: 4,
   };
 
-  const handleShowQR = () => setIsShowQR(true);
-  const handleCloseQR = () => setIsShowQR(false);
-
   useEffect(() => {
     (async () => {
       try {
         const response = await getItemEventApi(id);
         setEvent(response.data.data);
-      } catch (error) {}
+      } catch (error) {
+        toast.error('Opps! Something went wrong');
+      }
+    })();
+  }, [id]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getListUserApi(id);
+        setEventUsers(castToRows(res.data.data));
+      } catch (error) {
+        toast.error('Opps! Something went wrong');
+      }
     })();
   }, [id]);
 
@@ -77,8 +89,6 @@ const EventDetail = () => {
         : 'https://www.pphfoundation.ca/wp-content/uploads/2018/05/default-avatar-600x600.png',
       address: user.address,
     }));
-
-  const [eventUsers, setEventUsers] = useState([]);
 
   const columns = useMemo(
     () => [
@@ -125,17 +135,9 @@ const EventDetail = () => {
     ],
     [],
   );
-  useEffect(() => {
-    const getEventUsers = async () => {
-      try {
-        const res = await getListUserApi(id);
-        setEventUsers(castToRows(res.data.data));
-      } catch (error) {
-        console.log(error.response);
-      }
-    };
-    getEventUsers();
-  }, [id]);
+
+  const handleShowQR = () => setIsShowQR(true);
+  const handleCloseQR = () => setIsShowQR(false);
 
   return (
     <div className='single'>
@@ -298,21 +300,23 @@ const EventDetail = () => {
             disableSelectionOnClick
           />
         </Box>
-        <Modal
-          open={isShowQR}
-          onClose={handleCloseQR}
-          aria-labelledby='modal-modal-title'
-          aria-describedby='modal-modal-description'
-        >
-          <Box sx={style}>
-            <img
-              src={event.qrImage}
-              alt={event.title}
-              width='300px'
-              height='50%'
-            />
-          </Box>
-        </Modal>
+        {event && (
+          <Modal
+            open={isShowQR}
+            onClose={handleCloseQR}
+            aria-labelledby='modal-modal-title'
+            aria-describedby='modal-modal-description'
+          >
+            <Box sx={style}>
+              <img
+                src={event.qrImage}
+                alt={event.title}
+                width='300px'
+                height='50%'
+              />
+            </Box>
+          </Modal>
+        )}
       </div>
     </div>
   );

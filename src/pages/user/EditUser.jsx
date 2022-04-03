@@ -3,7 +3,6 @@ import Sidebar from '../../components/sidebar/Sidebar';
 import Navbar from '../../components/navbar/Navbar';
 import {
   TextField,
-  Button,
   Box,
   Grid,
   Select,
@@ -15,24 +14,25 @@ import {
 import { LocalizationProvider, MobileDatePicker } from '@mui/lab';
 import AdapterDateFns from '@mui/lab/modern/AdapterDateFns';
 import { useForm, Controller } from 'react-hook-form';
+import { LoadingButton } from '@mui/lab';
 import { getItemUserApi, updateUserApi } from './user.api';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import IconBreadcrumbs from '../../components/shared/breadcrumb';
 import PersonIcon from '@mui/icons-material/Person';
+import EditIcon from '@mui/icons-material/Edit';
 
 const EditUser = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { id } = useParams();
   const { handleSubmit, control, reset } = useForm();
   const [errors, setErrors] = useState([]);
-  const [user, setUser] = useState({});
 
   useEffect(() => {
     (async () => {
       try {
         const response = await getItemUserApi(id);
         const userData = response.data.data;
-        setUser(userData);
         reset({
           firstName: userData.firstName,
           lastName: userData.lastName,
@@ -40,15 +40,19 @@ const EditUser = () => {
           phoneNumber: userData.phoneNumber,
           address: userData.address,
           birthday: userData.birthday,
-          isAdmin: userData.isAdmin,
-          gender: userData.gender,
+          isAdmin: userData.isAdmin ? 'admin' : 'user',
+          gender: userData.gender ? 'male' : 'female',
         });
-      } catch (error) {}
+      } catch (error) {
+        toast.error('Opps. Something went wrong');
+      }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const onSubmit = async (data) => {
     try {
+      setIsLoading(true);
       const response = await updateUserApi(id, {
         ...data,
         isAdmin: data.isAdmin === 'admin',
@@ -62,8 +66,9 @@ const EditUser = () => {
         setErrors(error.response.data.errors);
       } else {
         toast.error('Opps. Something went wrong');
-        console.log(error.response);
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -75,19 +80,21 @@ const EditUser = () => {
         icon: <PersonIcon sx={{ mr: 0.5 }} fontSize='inherit' />,
       },
       {
-        link: `/user/create`,
-        title: 'Create User',
+        link: `/user/${id}/edit`,
+        title: 'Edit User',
         isActive: true,
       },
     ],
-    [],
+    [id],
   );
 
   useEffect(() => {
     errors.map((error) => {
       return toast.error(error.message);
     });
-    // setErrors([]);
+    return () => {
+      setErrors([]);
+    };
   }, [errors]);
 
   return (
@@ -113,7 +120,7 @@ const EditUser = () => {
                 fontSize: '1.2rem',
               }}
             >
-              Create User
+              Edit User
             </Box>
             <form onSubmit={handleSubmit(onSubmit)}>
               <Box
@@ -338,7 +345,7 @@ const EditUser = () => {
                         }}
                         labelId='labelGender'
                         name='gender'
-                        value={value ? 'male' : 'female'}
+                        value={value}
                         onChange={onChange}
                         error={!!error}
                       >
@@ -352,7 +359,7 @@ const EditUser = () => {
                       ) : null}
                     </FormControl>
                   )}
-                  // rules={{ required: 'Gender is required' }}
+                  rules={{ required: 'Gender is required' }}
                 />
                 <Controller
                   name='isAdmin'
@@ -377,7 +384,7 @@ const EditUser = () => {
                           width: '54ch',
                         }}
                         labelId='labelRole'
-                        value={value ? 'admin' : 'user'}
+                        value={value}
                         label='Role'
                         onChange={onChange}
                         error={!!error}
@@ -392,7 +399,7 @@ const EditUser = () => {
                       ) : null}
                     </FormControl>
                   )}
-                  // rules={{ required: 'Role is required' }}
+                  rules={{ required: 'Role is required' }}
                 />
               </Box>
               <Box
@@ -401,9 +408,16 @@ const EditUser = () => {
                   my: 2,
                 }}
               >
-                <Button type='submit' variant='contained' color='success'>
+                <LoadingButton
+                  type='submit'
+                  color='success'
+                  variant='contained'
+                  loadingPosition='start'
+                  loading={isLoading}
+                  startIcon={<EditIcon />}
+                >
                   Update
-                </Button>
+                </LoadingButton>
               </Box>
             </form>
           </Grid>
