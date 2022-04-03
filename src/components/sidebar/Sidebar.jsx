@@ -2,18 +2,17 @@ import './sidebar.scss';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import StoreIcon from '@mui/icons-material/Store';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import ModalConfirm from '../../components/shared/modalConfirm';
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const [isShowModal, setIsShowModal] = useState(false);
 
   const handleLogout = () => {
     setIsShowModal(false);
     localStorage.clear();
-    navigate('/login');
+    window.location.href = '/login';
   };
 
   const handleCloseModal = () => {
